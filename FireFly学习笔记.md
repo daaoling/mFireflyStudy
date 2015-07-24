@@ -5,6 +5,8 @@
 
 这篇笔记的目前的初步目标就是分析暗黑世界代码流程再自己写一点，嗯，就先这样。
 
+首先要感谢gfirefly群里的欧拉K等各位大神。对于一个python新手来说哪怕一点点指点都能让我少走多少弯路。
+
 # 1. firefly 安装
 
 ##安装流程
@@ -53,15 +55,19 @@
 
 	4. PB协议
 
-当然如果你打算先了解个大概，那么直接看下面的也是可以的。
+当然如果你打算先了解个大概，那么直接看下面的也是可以的。不过你会很吃力，在一些概念的讲解上。
 
-首先我们新建一个工程，如果你之前的firefly已经安装完毕，参考[如下][firefly的架设部署]部署
+如果你之前的firefly已经安装完毕， 首先我们新建一个模板工程。
+
+firefly-admin.py createproject youProjectName
 
 <!-- (http://github.com/yourname/your-repository/raw/master/images-folder/xxx.png) -->
 
-结果如下,对比目录结构：
+结果如下：
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/projectCompare.png)
+
+点击startmaster.py 运行, 如果没报错那么表示你已经可以开始firefly了.
 
 ###参考文档
 
@@ -69,4 +75,26 @@
 
 [我看到的最棒的Twisted入门教程]:(http://blog.sina.com.cn/s/blog_704b6af70100py9n.html)
 
-[firefly的架设部署]:(http://firefly.9miao.com/wiki/index.htm)
+
+# 3. firefly net 模块
+
+我想你在听说firfly的时候应该了解他是一个分布式服务器框架，同时我也假定你了解了一些手游服务器的架构。
+
+如果你没有概念, 你可以参考如下链接:
+	
+[MMORPG服务器架构][1]
+
+[知乎端游、手游服务端常用的架构是什么样的][2]
+
+如果了解的话，我们看下暗黑的模块分隔：
+
+![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/1.png)
+
+![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/2.png)
+
+
+###参考文档
+
+[1]:(http://www.blogjava.net/landon/archive/2012/07/14/383092.html)
+
+[2]:(http://www.zhihu.com/question/29779732)

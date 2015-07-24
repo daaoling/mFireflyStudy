@@ -57,6 +57,11 @@
 
 首先我们新建一个工程，如果你之前的firefly已经安装完毕，参考[如下][firefly的架设部署]部署
 
+<!-- (http://github.com/yourname/your-repository/raw/master/images-folder/xxx.png) -->
+
+结果如下,对比目录结构：
+
+![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/projectCompare.png)
 
 ###参考文档
 

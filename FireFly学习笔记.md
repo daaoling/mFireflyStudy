@@ -1,9 +1,9 @@
-#firefly 学习笔记
+#firefly 初级教程
 
-一直以来都在考虑服务器方面的发展，于是参考了firefly学习，官方近期推出的gfirefly打算看完在学。
-首先声明，我的笔记不会说的很详细，在需要的时候我只会贴出链接，不会再赘述一遍。
+一直以来都在考虑服务器方面的发展，于是参考了firefly学习，官方近期推出的gfirefly打算看完firefly在学。
+首先声明，我的教程不会说的很详细，在需要的时候我只会贴出链接，不会再赘述一遍。
 
-这篇笔记的目前的初步目标就是分析暗黑世界代码流程再自己写一点，嗯，就先这样。
+这篇教程的目前的初步目标就是分析暗黑世界代码流程再自己写一点，嗯，就先这样。
 
 首先要感谢gfirefly群里的欧拉K等各位大神。对于一个python新手来说哪怕一点点指点都能让我少走多少弯路。
 
@@ -14,7 +14,6 @@
 具体windows与linux的安装我就不加赘述，详情可以参考下方的链接
 
 基本都是easy_install就完事了
-
 
 就windows下安装 MySQL-python 与 pywin32 出了点问题，需要手动安装。
 
@@ -59,7 +58,7 @@
 
 如果你之前的firefly已经安装完毕， 首先我们新建一个模板工程。
 
-firefly-admin.py createproject youProjectName
+	firefly-admin.py createproject youProjectName
 
 <!-- (http://github.com/yourname/your-repository/raw/master/images-folder/xxx.png) -->
 
@@ -91,6 +90,24 @@ firefly-admin.py createproject youProjectName
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/1.png)
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/2.png)
+
+今天在这一篇中我们可以学到：
+	
+	*　factory 和 Protocol 关系
+
+	*　firefly net 进程节点的启动流程
+
+	*　拆包解包
+
+	*  进程之间的消息的分发 (保留)
+
+对于net模块的初级通信我在开始写的时候发现了一篇差不多的文章
+
+[[笨木头FireFly01]入门篇1·最简单的服务端和客户端连接](http://www.benmutou.com/archives/718)
+
+他是基于官方一个测试用例进行了讲解，非常适合初学者。哪怕你什么都不懂，看完他的文章你也会有一点最基本的认知。
+
+
 
 
 ###参考文档

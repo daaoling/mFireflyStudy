@@ -65,17 +65,15 @@
 
 <!-- (http://github.com/yourname/your-repository/raw/master/images-folder/xxx.png) -->
 
-结果如下：
+暗黑的工程目录对比，结果如下：
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/projectCompare.png)
 
 点击startmaster.py 运行, 如果没报错那么表示你已经可以开始firefly了.
 
-###参考文档
+[Twisted Developer Guides]:http://twistedmatrix.com/documents/current/core/howto/index.html
 
-[Twisted Developer Guides]:(http://twistedmatrix.com/documents/current/core/howto/index.html)
-
-[我看到的最棒的Twisted入门教程]:(http://blog.sina.com.cn/s/blog_704b6af70100py9n.html)
+[我看到的最棒的Twisted入门教程]:http://blog.sina.com.cn/s/blog_704b6af70100py9n.html
 
 
 
@@ -104,7 +102,7 @@
 
 	*　拆包解包
 
-## 首先，我们实现子进程初始化
+## 子进程初始化
 
 	$ python startmaster.py 
 
@@ -115,7 +113,6 @@ startmaster.py：
 	master = Master()
 	master.config('config.json','appmain.py')
 	master.start()
-
 
 config.json：
 
@@ -133,7 +130,6 @@ config.json：
 	         "name":"game1","db":true,"mem":true,"app":"app.gameserver","reload":"app.game.doreload","log":"app/logs/game1.log"}
 	}
 
-
 master.py => start():
 
 	config = json.load(open(self.configpath,'r'))
@@ -142,7 +138,6 @@ master.py => start():
 	    cmds = 'python %s %s %s'%(self.mainpath,sername,self.configpath)
 	    subprocess.Popen(cmds,shell=True)
 	reactor.run()
-
 
 log如下：
 
@@ -161,24 +156,21 @@ python appmain.py admin config.json
 
 对于net子进程，我们从上述的流程图就可以了解到net是直接和客户端打交道的。
 
-##　然后，我们要分析的就是net子进程，
+##　net子进程，
 
 	$ python appmain.py net config.json
+
 
 贴上主要代码：
 
 	"net":{"netport":11009,"name":"net","remoteport":[{"rootport":10000,"rootname":"gate"}],"app":"app.netserver","log":"app/logs/net.log"},
 
-
-appmain.py:
-	
+appmain.py:	
 	ser = FFServer()
     ser.config(serconfig, dbconfig=dbconf, memconfig=memconf,masterconf=masterconf)
     ser.start()
 
-
 server.FFServer => config(*arg):
-
     if netport:
 	    self.netfactory = LiberateFactory() //建立一个协议工厂
 	    netservice = services.CommandService("netservice") //建立一个service 用于消息分发
@@ -187,11 +179,9 @@ server.FFServer => config(*arg):
     
 
     if app:
-            __import__(app)
-
+            __import__(app)  //app.netserver
 
 server.FFServer => start():
-    
     def start(self):
         '''启动服务器
         '''
@@ -207,30 +197,37 @@ server.FFServer => start():
 
 此时我假定你已经对twisted有所了解，不然接下来涉及到的术语可能在阅读上有些困难。
 
+或者参考下面这篇文章:
+
+[[笨木头FireFly01]入门篇1·最简单的服务端和客户端连接](3)
+
+他是基于官方一个测试用例进行了讲解，非常适合初学者。相对来说我觉得他可能比我写的更加入门,如果你参考上述系列的话可以省去这一段直接看下一章节。(不过我还是要写，写写更健康)
+
+一般成熟的服务器与客户端基本的流程都是启动tcp连接进行监听之后，异步事件驱动实现对连接的消息处理。
+
+java就一般用mina,netty实现。
+
+python的twisted就用reactor模式实现监听，使用Protocl用于对连接的处理，Factory用于对连接的管理。
+
+Firefly框架的 netconnect模块就基于上面的机制封装了一下。
+
+下面是官方的一张结构图，我想已经理的很明白了。
+
+![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/3.png)
+
+## 拆包，解包
 
 
 
-##  拆包，解包
 
 ###参考文档
 
-[1]:(http://www.blogjava.net/landon/archive/2012/07/14/383092.html)
+[1]:http://www.blogjava.net/landon/archive/2012/07/14/383092.html
 
-[2]:(http://www.zhihu.com/question/29779732)
+[2]:http://www.zhihu.com/question/29779732
+
+[3]:http://www.benmutou.com/archives/718
 
 
 
-对于net模块的初级通信我在开始写的时候发现了一篇差不多的文章
-
-[[笨木头FireFly01]入门篇1·最简单的服务端和客户端连接](http://www.benmutou.com/archives/718)
-
-他是基于官方一个测试用例进行了讲解，非常适合初学者。哪怕你什么都不懂，看完他的文章你也会有一点最基本的认知。
-
-不过我倾向于在firefly的框架下, 进行解析。
-
-我们来看DiabloWorld/config.json
-
-"servers":{
-	"net":{"netport":11009,"name":"net","remoteport":[{"rootport":10000,"rootname":"gate"}],"app":"app.netserver","log":"app/logs/net.log"},
-}
 

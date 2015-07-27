@@ -11,15 +11,23 @@ from twisted.python import log
 from firefly.netconnect.protoc import LiberateFactory
 from firefly.utils import services
 
+reactor = reactor
 
 log.startLogging(sys.stdout)
 
-factory = LiberateFactory()
-
 services = services.CommandService("loginServer")
+
+def netserviceHandle(target):
+    services.mapTarget(target)
+
+@netserviceHandle
+def forward_0(*args,**kw):
+    print("forward_0")
+
+factory = LiberateFactory()
 factory.addServiceChannel(services)
 
-reactor.listen(65533,factory)
+reactor.listenTCP(34530,factory)
 reactor.run();
 
 

@@ -1,12 +1,19 @@
 #coding:utf8
 
 
-def handle(start):
-    print("test","test")
-    return start
+class mProcotol():
 
-@handle
-def start(a,b):
-    print("start","start")
+    def __init__(self):
+        self.dataHandler = self.dataHandlerCoroutine()
+        # self.dataHandler.next()
 
-# start(1,1)
+    def dataHandlerCoroutine(self):
+        while True:
+            print("1")
+            yield
+
+    def test(self):
+        self.dataHandler.send("test")
+
+mTest = mProcotol();
+# mTest.test();

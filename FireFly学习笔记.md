@@ -215,9 +215,10 @@ Firefly框架的 netconnect模块就基于上面的机制封装了一下。
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/3.png)
 
-## 拆包，解包
+## 拆包 , 解包
 
- 
+
+
 
 
 

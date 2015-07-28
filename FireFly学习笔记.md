@@ -93,14 +93,11 @@
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/2.png)
 
-
 今天在这一篇中我们可以学到：
 
 	*　firefly 进程的启动流程
-	
-	*　factory 和 Protocol 关系
 
-	*　拆包解包
+	*　net 模块对连接的处理
 
 ## 子进程初始化
 
@@ -191,17 +188,15 @@ server.FFServer => start():
 
 这样我们的net子进程就启动了。
 
-##  net 的 监听模型
+## net 模块的启动监听
 
 既然我们已经启动并配置了net进程用于客户端的连接, 我们在细节上做进一步的了解。
 
-此时我假定你已经对twisted有所了解，不然接下来涉及到的术语可能在阅读上有些困难。
-
-或者参考下面这篇文章:
+我在写这篇文章的时候找到了下面这个系列:
 
 [[笨木头FireFly01]入门篇1·最简单的服务端和客户端连接][3]
 
-他是基于官方一个测试用例进行了讲解，非常适合初学者。相对来说我觉得他可能比我写的更加入门,如果你参考上述系列的话可以省去这一段直接看下一章节,两者取其一即可。(不过我还是要写，写写更健康)
+他是基于官方一个测试用例进行了讲解，非常适合初学者。相对来说我觉得他可能比我写的更加入门,我建议先看他的系列，然后再看我下面的章节补充一下即可。
 
 一般成熟的服务器与客户端基本的流程都是启动tcp连接进行监听之后，异步事件驱动实现对连接的消息处理。
 
@@ -211,15 +206,11 @@ python的twisted就用reactor模式实现监听，使用Protocl用于对连接�
 
 Firefly框架的 netconnect模块就基于上面的机制封装了一下。
 
-下面是官方的一张结构图，我想已经理的很明白了。
+下面是官方的一张结构图，我想如果你看完了木头的上述章节这张图一下子就明白了。
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/3.png)
 
-## 拆包 , 解包
-
-接下来的流程我要求你懂一点基本的python知识，firefly使用struct模块实现2进制的封装
-
-###参考文档
+<!-- ###参考文档 -->
 
 [1]:http://www.blogjava.net/landon/archive/2012/07/14/383092.html
 
@@ -228,5 +219,42 @@ Firefly框架的 netconnect模块就基于上面的机制封装了一下。
 [3]:http://www.benmutou.com/archives/718
 
 
+# 3. firefly 进程间的通信
+
+firefly 号称分布式的服务器框架，那么他一定有一套成熟好用的进程间通信的方式， 这个就是twisted的PB协议。我在写这一章节的时候还是决定按着暗黑的流程在分析。
 
 
+这里我简单描述下PB在firefly的应用
+
+Firefly所有的分布式相关代码都在firefly/distribute/目录
+__init__.py  child.py     manager.py   node.py      reference.py root.py
+
+root.py 实现PB的server功能
+node.py 实现PB的client功能。
+child.py 每个client连接上root都会初始化一个child来保存该client的相关信息，并且将这些child通过manager来管理。
+manager.py 管理root的child，通过一个字典self._childs = {}，实现一个增删改的小管理器。
+reference.py 如果你看了前面twisted官网的介绍就会知道，node只要实例化一个 pb.Referenceable 类，并把它传递给root，那么root就能够把这个pb.Referenceble当成句柄来远程调用client的函数。
+
+![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/4.png)
+
+config.json
+	
+	"gate":{"rootport":10000,"name":"gate","db":true,"mem":true,"app":"app.gateserver","log":"app/logs/gate.log"},
+
+	"net":{"netport":11009,"name":"net","remoteport":[{"rootport":10000,"rootname":"gate"}],"app":"app.netserver","log":"app/logs/net.log"},
+
+我们这里再来回顾暗黑gate, net节点的配置，发现net 有一个 remoteport 对应 gate 的 rootport
+
+上述配置对应的代码如下:
+
+server.py
+
+    if rootport:
+	    self.root = PBRoot()
+	    rootservice = services.Service("rootservice")
+	    self.root.addServiceChannel(rootservice)
+	    reactor.listenTCP(rootport, BilateralFactory(self.root))
+
+    for cnf in self.remoteportlist:
+	    rname = cnf.get('rootname')
+	    self.remote[rname] = RemoteObject(self.servername)

@@ -24,6 +24,7 @@ if __name__=="__main__":
     serconfig = sersconf.get(servername)
     ser = FFServer()
     ser.config(serconfig, servername=servername, dbconfig=dbconf, memconfig=memconf, masterconf=masterconf)
+    # python appmain.py net config.json
     ser.start()
     
     

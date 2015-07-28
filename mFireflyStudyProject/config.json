@@ -1,7 +1,6 @@
 {
   "master":{"roothost":"localhost","rootport":9999,"webport":9998},
   "servers":{
-    "net":{"netport":1000,"name":"gate","remoteport":[{"rootport":20001,"rootname":"gate"}],"app":"app.apptest"},
-    "gate":{"rootport":20001,"name":"gate"}
+    "net":{"netport":34530,"name":"net","app":"app.netServer"}
   }
 }

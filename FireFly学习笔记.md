@@ -219,14 +219,12 @@ Firefly框架的 netconnect模块就基于上面的机制封装了一下。
 [3]:http://www.benmutou.com/archives/718
 
 
-# 3. firefly 进程间的通信
+# 3.firefly 进程间的通信 并 解析gate模块
 
 firefly 号称分布式的服务器框架，那么他一定有一套成熟好用的进程间通信的方式， 这个就是twisted的PB协议。我在写这一章节的时候还是决定按着暗黑的流程在分析。
 
 
-这里我简单描述下PB在firefly的应用
-
-Firefly所有的分布式相关代码都在firefly/distribute/目录
+Firefly对于PB的封装在 /distribute 目录
 __init__.py  child.py     manager.py   node.py      reference.py root.py
 
 root.py 实现PB的server功能
@@ -236,6 +234,10 @@ manager.py 管理root的child，通过一个字典self._childs = {}，实现一�
 reference.py 如果你看了前面twisted官网的介绍就会知道，node只要实例化一个 pb.Referenceable 类，并把它传递给root，那么root就能够把这个pb.Referenceble当成句柄来远程调用client的函数。
 
 ![pic](http://github.com/daaoling/mFireflyStudy/raw/master/pic/4.png)
+
+
+
+下面来看看暗黑对其的主要应用
 
 config.json
 	
@@ -258,3 +260,20 @@ server.py
     for cnf in self.remoteportlist:
 	    rname = cnf.get('rootname')
 	    self.remote[rname] = RemoteObject(self.servername)
+
+gate 模块有 PBRoot()
+
+而 net 模块有 对应 gate 的 RemoteObject()
+
+	class RemoteObject(object):
+	    '''远程调用对象'''
+	    
+	    def __init__(self,name):
+	        '''初始化远程调用对象
+	        @param port: int 远程分布服的端口号
+	        @param rootaddr: 根节点服务器地址
+	        '''
+	        self._name = name
+	        self._factory = pb.PBClientFactory()
+	        self._reference = ProxyReference()
+	        self._addr = None
